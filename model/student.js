@@ -18,5 +18,9 @@ var StudentSchema = new mongoose.Schema({
         default: Date.now,
     }
 
-});
+
+},
+    {
+        collection: 'student',
+    });
 module.exports = mongoose.model('Student', StudentSchema);

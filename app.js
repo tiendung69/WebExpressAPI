@@ -29,7 +29,7 @@ app.use(function (req, res, next) {
 
 var MONGODB_HOST = 'localhost';
 var MONGODB_PORT = 27017;
-var MONGODB_DATABASE = 'manage_student';
+var MONGODB_DATABASE = 'manage';
 
 
 mongoose.connect(
