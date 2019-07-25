@@ -196,7 +196,7 @@ router.get('/student/:idStudent/school/:idSchool/update-subject/:idSubject', asy
                     "schools.$[schoolFiller].subject.$[subjectFiller]": {
 
                         "nameSubject": "Math",
-                        "teacher": "teacher update",
+                        "teacher": "teacher update new",
                         "scores": [
                             {
                                 "score-id": new ObjectId("5d39ef3dab63dd2b085a400e"),
@@ -231,9 +231,44 @@ router.get('/student/:idStudent/school/:idSchool/update-subject/:idSubject', asy
 
 
 
+function jsonEscape(str) {
+    return str.replace(/\n/g, "\\\\n").replace(/\r/g, "\\\\r").replace(/\t/g, "\\\\t");
+}
+function jsonEscape(str)  {
+    return str.replace(/\n/g, "\\\\n").replace(/\r/g, "\\\\r").replace(/\t/g, "\\\\t");
+}
+router.post("/json", async (req, res, next) => {
+
+    // console.log(req.body);
+    console.log( req.body.json);
+    // var a = 5;
+
+    var data = req.body.json;
+    var b = JSON.stringify(data);
+  
+
+    var a = "";
+    console.log(b.replace(/(\r\n|\n|\r|\t)/gm,""));
+    
 
 
+    var url = "mongodb://localhost:27017/manage_student";
 
+
+    await MongoClient.connect(url, { useNewUrlParser: true }, async (err, db) => {
+
+        var dbo = db.db("manage_student");
+        // var result = await dbo.collection("student").insertOne(
+        //    {data: req.body.json} 
+        // )
+        res.json({
+            status: 200,
+            msg: 'ok',
+            data: "result"
+        })
+    });
+
+});
 
 
 
