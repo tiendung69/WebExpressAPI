@@ -231,25 +231,50 @@ router.get('/student/:idStudent/school/:idSchool/update-subject/:idSubject', asy
 
 
 
-function jsonEscape(str) {
-    return str.replace(/\n/g, "\\\\n").replace(/\r/g, "\\\\r").replace(/\t/g, "\\\\t");
-}
-function jsonEscape(str)  {
-    return str.replace(/\n/g, "\\\\n").replace(/\r/g, "\\\\r").replace(/\t/g, "\\\\t");
+function escapeSpecialChars(jsonString) {
+
+    return jsonString
+        .replace(/\n/g, "")
+        .replace(/\r/g, "")
+        .replace(/\\t/g, "")
+        .replace(/"  "/g, "")
+        .replace(/\f/g, "");
+
 }
 router.post("/json", async (req, res, next) => {
 
     // console.log(req.body);
-    console.log( req.body.json);
+    // console.log( req.body.json);
     // var a = 5;
 
     var data = req.body.json;
-    var b = JSON.stringify(data);
-  
+    console.log(data);
+   var b=  JSON.stringify(data, null, '  ').replace(/: "(?:[^"]+|\\")*"$/, ' $&');
+    var a = escapeSpecialChars(data);
+    console.log(b);
+   // console.log(JSON.parse(a));
+    //     var b = JSON.stringify(data);
+    //     var c = b.replace(/\\n/g, "");
+    //     var d = c.replace(/\\t/g, "");
+    //     var e = d.replace(/\\/g, "");
+    //     var f = e.replace(/ /g, "");
+    //     var x = f.replace(/\\/g,"");
+    //     var m = x.replace(/\'/g,"'");
 
-    var a = "";
-    console.log(b.replace(/(\r\n|\n|\r|\t)/gm,""));
-    
+    //     var k = m.substring(1, m.length-1);
+    //     var l = k.substring(0, m.length-1);
+    //     var n = l.replace(/\\/g,"");
+
+    //    // console.log(JSON.stringify(l));
+    //     for(var i= 0; i< l.length;i++){
+    //         if(l[i] == "'"){
+    //             l[i] = '"';
+    //         }
+    //     }
+    //     console.log(JSON.stringify(l));
+
+    // console.log(JSON.parse(l));
+    //console.log(JSON.parse('{"name":"John", "age":30, "city":"New York"}'));
 
 
     var url = "mongodb://localhost:27017/manage_student";
@@ -259,7 +284,7 @@ router.post("/json", async (req, res, next) => {
 
         var dbo = db.db("manage_student");
         // var result = await dbo.collection("student").insertOne(
-        //    {data: req.body.json} 
+        //    {data:n} 
         // )
         res.json({
             status: 200,
