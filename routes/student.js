@@ -3,22 +3,250 @@ var router = express.Router();
 var Student = require('../model/student');
 var mongoose = require('mongoose');
 /* GET home page. */
+
+var MongoClient = require('mongodb').MongoClient;
 router.get('/', async (req, res, next) => {
-    await Student.find({}, (err, data) => {
-        if (err) {
+
+    console.log("start debug");
+    var a = 10;
+    var b = 100;
+
+    var url = "mongodb://localhost:27017/manage_student";
+
+    await MongoClient.connect(url, { useNewUrlParser: true }, async (err, db) => {
+        if (err) throw err;
+        var dbo = db.db("manage_student");
+        console.log("connect")
+        /*Return only the documents where the address starts with an "S":*/
+        await dbo.collection("student").find({}).toArray(function (err, result) {
+            console.log("query");
+            if (err) throw err;
+            console.log(result);
+
+            db.close();
             res.json({
-                status: 400,
-                msg: 'fail'
-            });
-        }
-        res.json({
-            status: 200,
-            data: data,
-            msg: 'success'
+                data: result
+            })
         });
     });
 
+
+
+
+
+    // await Student.find({}, (err, data) => {
+    //     if (err) {
+    //         res.json({
+    //             status: 400,
+    //             msg: 'fail'
+    //         });
+    //     }
+    //     res.json({
+    //         status: 200,
+    //         data: data,
+    //         msg: 'success'
+    //     });
+    // });
+
 });
+
+
+// insert list school of student
+var ObjectId = require('mongodb').ObjectID;
+router.get('/student/:idStudent', async (req, res, next) => {
+
+    var url = "mongodb://localhost:27017/manage_student";
+
+    var idStudent = req.params.idStudent;
+    console.log(idStudent);
+    await MongoClient.connect(url, { useNewUrlParser: true }, async (err, db) => {
+        if (err) throw err;
+        var dbo = db.db("manage_student");
+        var result = await dbo.collection("student").updateOne(
+            { _id: new ObjectId(idStudent) },
+            {
+                $push: {
+                    "schools": {
+                        "school-id": new ObjectId(),
+                        "nameSchool": "UIT 3",
+                        "subject": []
+                    }
+
+                }
+            }
+        )
+        res.json({
+            data: result
+        });
+    });
+
+
+
+});
+
+
+// insert subject of student study in school
+
+router.get('/student/:idStudent/school/:idSchool', async (req, res, next) => {
+
+    var url = "mongodb://localhost:27017/manage_student";
+
+    var idStudent = req.params.idStudent;
+    var idSchool = req.params.idSchool;
+    console.log(idStudent);
+    await MongoClient.connect(url, { useNewUrlParser: true }, async (err, db) => {
+        if (err) throw err;
+        var dbo = db.db("manage_student");
+        var result = await dbo.collection("student").updateOne(
+            { _id: new ObjectId(idStudent) },
+            {
+                $push: {
+                    "schools.$[school].subject": {
+                        "subject-id": new ObjectId(),
+                        "nameSubject": "OOP",
+                        "scores": []
+                    }
+
+                }
+            },
+            {
+                arrayFilters: [
+                    {
+                        "school.school-id": new ObjectId(idSchool)
+                    }
+                ]
+            }
+        )
+        res.json({
+            data: result
+        });
+    });
+
+
+
+});
+
+// insert score
+router.get('/student/:idStudent/school/:idSchool/subject/:idSubject', async (req, res, next) => {
+
+    var url = "mongodb://localhost:27017/manage_student";
+
+    var idStudent = req.params.idStudent;
+    var idSchool = req.params.idSchool;
+    var idSubject = req.params.idSubject;
+    console.log(idStudent);
+    await MongoClient.connect(url, { useNewUrlParser: true }, async (err, db) => {
+        if (err) throw err;
+        var dbo = db.db("manage_student");
+        var result = await dbo.collection("student").updateOne(
+            { _id: new ObjectId(idStudent) },
+            {
+                $push: {
+                    "schools.$[schoolFiller].subject.$[subjectFiller].scores": {
+                        "score-id": new ObjectId(),
+                        "nameScore": "midterm score",
+                        "score": 10
+                    }
+
+                }
+            },
+            {
+                arrayFilters: [
+                    {
+                        "schoolFiller.school-id": new ObjectId(idSchool)
+
+                    },
+                    {
+                        "subjectFiller.subject-id": new ObjectId(idSubject)
+                    }
+                ]
+            }
+        )
+        res.json({
+            data: result
+        });
+    });
+
+
+
+});
+
+
+
+
+
+
+
+
+router.get('/student/:idStudent/school/:idSchool/update-subject/:idSubject', async (req, res, next) => {
+
+    var url = "mongodb://localhost:27017/manage_student";
+
+    var idStudent = req.params.idStudent;
+    var idSchool = req.params.idSchool;
+    var idSubject = req.params.idSubject;
+    console.log(idStudent);
+    await MongoClient.connect(url, { useNewUrlParser: true }, async (err, db) => {
+        if (err) throw err;
+        var dbo = db.db("manage_student");
+        var result = await dbo.collection("student").updateOne(
+            { _id: new ObjectId(idStudent) },
+            {
+                $set: {
+                    "schools.$[schoolFiller].subject.$[subjectFiller]": {
+
+                        "nameSubject": "Math",
+                        "teacher": "teacher update",
+                        "scores": [
+                            {
+                                "score-id": new ObjectId("5d39ef3dab63dd2b085a400e"),
+                                "nameScore": "midterm score",
+                                "score": 10
+                            }
+                        ]
+                    }
+
+                }
+            },
+            {
+                arrayFilters: [
+                    {
+                        "schoolFiller.school-id": new ObjectId(idSchool)
+
+                    },
+                    {
+                        "subjectFiller.subject-id": new ObjectId(idSubject)
+                    }
+                ]
+            }
+        )
+        res.json({
+            data: result
+        });
+    });
+
+
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 router.post('/', async (req, res, next) => {

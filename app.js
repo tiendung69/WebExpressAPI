@@ -3,7 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-var mongoose = require('mongoose');
+//var mongoose = require('mongoose');
 var indexRouter = require('./routes/index');
 var studentRouter = require('./routes/student');
 
@@ -32,14 +32,14 @@ var MONGODB_PORT = 27017;
 var MONGODB_DATABASE = 'manage_student';
 
 
-mongoose.connect(
-    `mongodb://${MONGODB_HOST}:${MONGODB_PORT}/${MONGODB_DATABASE}`,
-    { useNewUrlParser: true }
-).then(() => {
-    console.log("Connect DB Successfull");
-});
+// mongoose.connect(
+//     `mongodb://${MONGODB_HOST}:${MONGODB_PORT}/${MONGODB_DATABASE}`,
+//     { useNewUrlParser: true }
+// ).then(() => {
+//     console.log("Connect DB Successfull");
+// });
 
-mongoose.set('useFindAndModify', false);
+// mongoose.set('useFindAndModify', false);
 
 // error handler
 app.use(function (err, req, res, next) {
